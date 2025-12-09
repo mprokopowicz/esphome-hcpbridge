@@ -26,7 +26,7 @@
 // When the door is at position 0x08 and not moving Status get changed to Ventig.
 #define VENT_POS 0x08
 
-static const char *TAG_HCI = "HCI-BUS";
+static const char *TAG_HCI = "hcpbridge.status";
 
 
 
@@ -87,6 +87,7 @@ public:
     bool debMessage = false;
     float gotoPosition = 0.0f;
     bool valid = false;
+    uint8_t rawStatusCode = 0;  // Raw status code from modbus - for logging
 
     void setTargetPosition(float targetPosition);
     void setGotoPosition(float setPosition);

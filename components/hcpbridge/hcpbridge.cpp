@@ -5,6 +5,8 @@ namespace esphome
   namespace hcpbridge
   {
 
+    static const char *const TAG = "hcpbridge";
+
     void HCPBridge::setup()
     {
       this->is_connected_->publish_state(false);
@@ -21,6 +23,12 @@ namespace esphome
       if (this->engine->state->valid) {
         if (this->is_connected_->state != true) {
           this->is_connected_->publish_state(true);
+        }
+        // Log status changes when state changes
+        static uint8_t lastRawStatus = 255;
+        if (this->engine->state->rawStatusCode != lastRawStatus) {
+          lastRawStatus = this->engine->state->rawStatusCode;
+          ESP_LOGI(TAG, "[STATUS] raw_code=0x%02X (decimal=%d)", lastRawStatus, lastRawStatus);
         }
       } else {
         if (this->is_connected_->state != false) {
