@@ -199,7 +199,6 @@ uint16_t HoermannGarageEngine::onCurrentStateChanged(TRegister *reg, uint16_t va
   if (((reg->value & 0xFF00) != (val & 0xFF00)))
   {
     uint8_t rawStatus = (val & 0xFF00) >> 8;
-    this->state->rawStatusCode = rawStatus;  // Store raw status code
     // Use WARNING level so it's always visible regardless of logger level
     ESP_LOGW(TAG_HCI, "Status changed: raw_code=0x%02X (decimal=%d), address=0x%x, value=0x%x", rawStatus, rawStatus, reg->address.address, val);
 

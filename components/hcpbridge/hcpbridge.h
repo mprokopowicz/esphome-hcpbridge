@@ -2,7 +2,6 @@
 
 #include "esphome/core/component.h"
 #include "esphome/components/binary_sensor/binary_sensor.h"
-#include "esphome/components/sensor/sensor.h"
 #include "esphome/core/defines.h"
 #include "esphome/core/hal.h"
 #include "esphome/core/log.h"
@@ -21,7 +20,6 @@ namespace esphome
         void update() override;
       
         void set_is_connected(binary_sensor::BinarySensor *is_connected) { this->is_connected_ = is_connected; }
-        void set_raw_status_sensor(sensor::Sensor *raw_status_sensor) { this->raw_status_sensor_ = raw_status_sensor; }
         void set_tx_pin(InternalGPIOPin *tx_pin) { this->tx_pin_ = tx_pin; }
         void set_rx_pin(InternalGPIOPin *rx_pin) { this->rx_pin_ = rx_pin; }
         void set_rts_pin(InternalGPIOPin *rts_pin) { this->rts_pin_ = rts_pin; }
@@ -31,7 +29,6 @@ namespace esphome
 
       protected:
         binary_sensor::BinarySensor *is_connected_;
-        sensor::Sensor *raw_status_sensor_{nullptr};
         InternalGPIOPin *tx_pin_;
         InternalGPIOPin *rx_pin_;
         InternalGPIOPin *rts_pin_;
