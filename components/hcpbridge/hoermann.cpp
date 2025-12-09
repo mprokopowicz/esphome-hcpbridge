@@ -198,46 +198,59 @@ uint16_t HoermannGarageEngine::onCurrentStateChanged(TRegister *reg, uint16_t va
   // on First Byte changed
   if (((reg->value & 0xFF00) != (val & 0xFF00)))
   {
-    ESP_LOGI(TAG_HCI, "onCurrentStateChanged. address=%x, value=%x (actual: %x)", reg->address.address, val, (val & 0xFF00) >> 8);
+    uint8_t rawStatus = (val & 0xFF00) >> 8;
+    this->state->rawStatusCode = rawStatus;  // Store raw status code
+    // Use WARNING level so it's always visible regardless of logger level
+    ESP_LOGW(TAG_HCI, "Status changed: raw_code=0x%02X (decimal=%d), address=0x%x, value=0x%x", rawStatus, rawStatus, reg->address.address, val);
 
-    switch ((val & 0xFF00) >> 8)
+    switch (rawStatus)
     {
     case 0x1:
+      ESP_LOGD(TAG_HCI, "Status 0x%02X -> OPENING", rawStatus);
       this->state->setState(HoermannState::State::OPENING);
       break;
     case 0x2:
+      ESP_LOGD(TAG_HCI, "Status 0x%02X -> CLOSING", rawStatus);
       this->state->setState(HoermannState::State::CLOSING);
       break;
     case 0x20:
+      ESP_LOGD(TAG_HCI, "Status 0x%02X -> OPEN", rawStatus);
       this->state->setState(HoermannState::State::OPEN);
       break;
     case 0x40:
+      ESP_LOGD(TAG_HCI, "Status 0x%02X -> CLOSED", rawStatus);
       this->state->setState(HoermannState::State::CLOSED);
       break;
     case 0x80:
+      ESP_LOGD(TAG_HCI, "Status 0x%02X -> HALFOPEN", rawStatus);
       this->state->setState(HoermannState::State::HALFOPEN);
       break;
     case 0x09:
+      ESP_LOGD(TAG_HCI, "Status 0x%02X -> MOVE_VENTING", rawStatus);
       this->state->setState(HoermannState::State::MOVE_VENTING);
       break;
     case 0x05:
+      ESP_LOGD(TAG_HCI, "Status 0x%02X -> MOVE_HALF", rawStatus);
       this->state->setState(HoermannState::State::MOVE_HALF);
       break;
     case 0x0A:
+      ESP_LOGD(TAG_HCI, "Status 0x%02X -> VENT", rawStatus);
       this->state->setState(HoermannState::State::VENT);
       break;
     case 0x00:
       if (this->state->currentPosition == this->state->targetPosition && (int)(this->state->currentPosition * 200) == VENT_POS)
       {
+        ESP_LOGD(TAG_HCI, "Status 0x%02X -> VENT (position-based)", rawStatus);
         this->state->setState(HoermannState::State::VENT);
       }
       else
       {
+        ESP_LOGD(TAG_HCI, "Status 0x%02X -> STOPPED", rawStatus);
         this->state->setState(HoermannState::State::STOPPED);
       }
       break;
     default:
-      ESP_LOGW(TAG_HCI, "unknown State %x", (val & 0xFF00) >> 8);
+      ESP_LOGW(TAG_HCI, "*** UNKNOWN STATUS CODE: 0x%02X (decimal=%d) *** - Please report this code!", rawStatus, rawStatus);
     }
   }
   return val;

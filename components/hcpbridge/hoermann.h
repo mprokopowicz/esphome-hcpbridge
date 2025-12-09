@@ -87,6 +87,7 @@ public:
     bool debMessage = false;
     float gotoPosition = 0.0f;
     bool valid = false;
+    uint8_t rawStatusCode = 0;  // Raw status code from modbus
 
     void setTargetPosition(float targetPosition);
     void setGotoPosition(float setPosition);

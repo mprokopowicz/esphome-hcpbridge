@@ -22,6 +22,10 @@ namespace esphome
         if (this->is_connected_->state != true) {
           this->is_connected_->publish_state(true);
         }
+        // Update raw status code sensor
+        if (this->raw_status_sensor_ != nullptr) {
+          this->raw_status_sensor_->publish_state(this->engine->state->rawStatusCode);
+        }
       } else {
         if (this->is_connected_->state != false) {
           this->is_connected_->publish_state(false);
